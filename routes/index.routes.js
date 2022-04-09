@@ -16,4 +16,13 @@ router.post("/addbook", async (req, res) => {
   }
 });
 
+router.get("/bookList", async (req, res) => {
+  try {
+    const allBooks = await BookModel.find();
+    res.status(200).json(allBooks);
+  } catch (err) {
+    console.log("There was an error adding a book", err);
+  }
+});
+
 module.exports = router;
