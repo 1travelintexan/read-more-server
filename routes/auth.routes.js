@@ -95,11 +95,11 @@ router.post("/login", isLoggedOut, (req, res, next) => {
 
   // Here we use the same logic as above
   // - either length based parameters or we check the strength of a password
-  if (password.length < 8) {
-    return res.status(400).json({
-      errorMessage: "Your password needs to be at least 8 characters long.",
-    });
-  }
+  // if (password.length < 8) {
+  //   return res.status(400).json({
+  //     errorMessage: "Your password needs to be at least 8 characters long.",
+  //   });
+  // }
 
   // Search the database for a user with the username submitted in the form
   User.findOne({ username })
@@ -114,7 +114,9 @@ router.post("/login", isLoggedOut, (req, res, next) => {
         if (!isSamePassword) {
           return res.status(400).json({ errorMessage: "Wrong credentials." });
         }
+        user.password = "****";
         req.session.user = user;
+        console.log("logged in user", req.session);
         // req.session.user = user._id; // ! better and safer but in this case we saving the entire user object
         return res.json(user);
       });
@@ -128,13 +130,12 @@ router.post("/login", isLoggedOut, (req, res, next) => {
     });
 });
 
-router.get("/logout", isLoggedIn, (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ errorMessage: err.message });
-    }
-    res.json({ message: "Done" });
-  });
+router.post("/logout", isLoggedIn, (req, res) => {
+  console.log("made it here", req.session);
+  req.session.destroy();
+  console.log(req.session);
+  // Nothing to send back to the user
+  res.status(204).json({});
 });
 
 module.exports = router;

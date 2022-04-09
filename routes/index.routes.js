@@ -16,7 +16,8 @@ router.post("/addbook", async (req, res) => {
   }
 });
 
-router.get("/bookList", async (req, res) => {
+router.get("/book-list", async (req, res) => {
+  console.log(req.session);
   try {
     const allBooks = await BookModel.find();
     res.status(200).json(allBooks);
