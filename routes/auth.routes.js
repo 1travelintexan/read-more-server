@@ -1,8 +1,4 @@
 const router = require("express").Router();
-
-//This is for the user image
-const fileUploader = require("../config/cloudinary.config");
-
 // ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
@@ -16,10 +12,6 @@ const User = require("../models/User.model");
 // Require necessary (isLoggedOut and isLiggedIn) middleware in order to control access to specific routes
 const isLoggedOut = require("../middleware/isLoggedOut");
 const isLoggedIn = require("../middleware/isLoggedIn");
-
-router.get("/loggedin", (req, res) => {
-  res.json(req.user);
-});
 
 router.post("/signup", isLoggedOut, (req, res) => {
   console.log("here", req.body);
@@ -70,8 +62,9 @@ router.post("/signup", isLoggedOut, (req, res) => {
       .then((user) => {
         // Bind the user to the session object
         req.session.user = user;
-        console.log("here is your new user", user);
+        req.session.password = "****";
         res.status(201).json(user);
+        console.log("User successfully signed up");
       })
       .catch((error) => {
         if (error instanceof mongoose.Error.ValidationError) {
@@ -120,7 +113,7 @@ router.post("/login", isLoggedOut, (req, res, next) => {
         }
         user.password = "****";
         req.session.user = user;
-        console.log("logged in user", req.session);
+        console.log("User just logged in successfully");
         // req.session.user = user._id; // ! better and safer but in this case we saving the entire user object
         return res.json(user);
       });
@@ -137,21 +130,16 @@ router.post("/login", isLoggedOut, (req, res, next) => {
 router.post("/logout", isLoggedIn, (req, res) => {
   console.log("made it here", req.session);
   req.session.destroy();
-  console.log(req.session);
   // Nothing to send back to the user
   res.status(204).json({});
 });
 
-//user image upload route
-router.put("/image-upload", fileUploader.single("userImage"), (req, res) => {
-  console.log("Trying to do an image bro", req.session, req.body);
-  //User.findByIdAndUpdate()
-
-  // ({ title, description, imageUrl: req.file.path })
-  //   .then(newlyCreatedMovieFromDB => {
-  //     console.log(newlyCreatedMovieFromDB);
-  //   })
-  //   .catch(error => console.log(`Error while creating a new movie: ${error}`));
+// THIS IS A PROTECTED ROUTE
+// will handle all get requests to http:localhost:5005/api/user
+router.get("/user", isLoggedIn, (req, res, next) => {
+  console.log("component did mount, user", req.user);
+  let user = req.user;
+  res.status(200).json(user);
 });
 
 module.exports = router;
