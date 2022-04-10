@@ -1,5 +1,8 @@
 const router = require("express").Router();
 
+//This is for the user image
+const fileUploader = require("../config/cloudinary.config");
+
 // ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
@@ -19,6 +22,7 @@ router.get("/loggedin", (req, res) => {
 });
 
 router.post("/signup", isLoggedOut, (req, res) => {
+  console.log("here", req.body);
   const { username, password } = req.body;
 
   if (!username) {
@@ -136,6 +140,18 @@ router.post("/logout", isLoggedIn, (req, res) => {
   console.log(req.session);
   // Nothing to send back to the user
   res.status(204).json({});
+});
+
+//user image upload route
+router.put("/image-upload", fileUploader.single("userImage"), (req, res) => {
+  console.log("Trying to do an image bro", req.session, req.body);
+  //User.findByIdAndUpdate()
+
+  // ({ title, description, imageUrl: req.file.path })
+  //   .then(newlyCreatedMovieFromDB => {
+  //     console.log(newlyCreatedMovieFromDB);
+  //   })
+  //   .catch(error => console.log(`Error while creating a new movie: ${error}`));
 });
 
 module.exports = router;
