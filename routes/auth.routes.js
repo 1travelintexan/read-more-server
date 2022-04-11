@@ -136,7 +136,7 @@ router.post("/logout", isLoggedIn, (req, res) => {
 
 // THIS IS A PROTECTED ROUTE
 // will handle all get requests to http:localhost:5005/api/user
-router.get("/user", isLoggedIn, (req, res, next) => {
+router.get("/user", (req, res, next) => {
   console.log("component did mount, user", req.user);
   let user = req.user;
   res.status(200).json(user);

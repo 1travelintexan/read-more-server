@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const BookModel = require("../models/Book.model");
-const uploader = require("../config/cloudinary.config");
+const fileUploader = require("../config/cloudinary.config");
 const User = require("../models/User.model");
 
 router.get("/", async (req, res, next) => {
@@ -28,27 +28,21 @@ router.get("/book-list", async (req, res) => {
   }
 });
 
-router.post("/upload", uploader.single("userImage"), (req, res, next) => {
-  // the uploader.single() callback will send the file to cloudinary and get you and obj with the url in return
-  console.log("file is: ", req.file, "seesion is:", req.session);
-
-  if (!req.file) {
-    console.log("there was an error uploading the file");
-    next(new Error("No file uploaded!"));
-    return;
-  }
-
-  // You will get the image url in 'req.file.path'
-  // Your code to store your url in your database should be here
-  User.findByIdAndUpdate(
-    { _id: req.session.user._id },
-    { userImage: req.file.path }
-  )
-    .then((imageResponse) => {
-      res.status(200).json(imageResponse);
+// POST route for saving a user image in the database
+// This route has the image upload example
+// fileUploader.single("userImage")
+router.post("/upload", fileUploader.single("imageUrl"), (req, res) => {
+  let userId = req.session.user._id;
+  let newImage = req.file.path;
+  console.log("the image is here!", req.file, userId);
+  User.findByIdAndUpdate(userId, { imageUrl: newImage })
+    .then((updatedUser) => {
+      console.log("here is the Updated User", updatedUser);
+      res.status(200).json(updatedUser);
     })
-    .catch((err) => {
-      res.status(400).json("There was a problem with updating your user");
-    });
+    .catch((error) =>
+      console.log(`Error while creating a new movie: ${error}`)
+    );
 });
+
 module.exports = router;
