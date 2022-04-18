@@ -30,8 +30,8 @@ router.get("/book-list", async (req, res) => {
 
 // POST route for saving a user image in the database
 // This route has the image upload example
-// fileUploader.single("userImage")
 router.post("/upload", fileUploader.single("imageUrl"), (req, res) => {
+  console.log("this sis the body", req.body);
   let userId = req.session.user._id;
   let newImage = req.file.path;
   console.log("the image is here!", req.file, userId);

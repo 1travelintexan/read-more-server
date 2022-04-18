@@ -128,7 +128,7 @@ router.post("/login", isLoggedOut, (req, res, next) => {
 });
 
 router.post("/logout", isLoggedIn, (req, res) => {
-  console.log("made it here", req.session);
+  console.log("made it here to logout", req.session);
   req.session.destroy();
   // Nothing to send back to the user
   res.status(204).json({});
@@ -136,10 +136,12 @@ router.post("/logout", isLoggedIn, (req, res) => {
 
 // THIS IS A PROTECTED ROUTE
 // will handle all get requests to http:localhost:5005/api/user
-router.get("/user", (req, res, next) => {
-  console.log("component did mount, user", req.user);
-  let user = req.user;
-  res.status(200).json(user);
+router.get("/user", async (req, res, next) => {
+  console.log("component did mount");
+  let userId = req.user._id;
+  let profileUser = await User.findById(userId);
+  console.log("for the profile", profileUser);
+  res.status(200).json(profileUser);
 });
 
 module.exports = router;
