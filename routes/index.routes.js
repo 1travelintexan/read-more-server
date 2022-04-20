@@ -34,10 +34,10 @@ router.post("/upload", fileUploader.single("imageUrl"), (req, res) => {
   console.log("this sis the body", req.body);
   let userId = req.session.user._id;
   let newImage = req.file.path;
-  console.log("the image is here!", req.file, userId);
+  console.log("the image is here!", req.file);
   User.findByIdAndUpdate(userId, { imageUrl: newImage })
     .then((updatedUser) => {
-      console.log("here is the Updated User", updatedUser);
+      console.log("here is the Updated User with imageUrl", updatedUser);
       res.status(200).json(updatedUser);
     })
     .catch((error) =>

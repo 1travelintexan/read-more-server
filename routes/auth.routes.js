@@ -137,13 +137,16 @@ router.post("/logout", isLoggedIn, (req, res) => {
 //update user route
 router.post("/update", async (req, res) => {
   let userId = req.session.user._id;
+  console.log("here is the update body", req.body);
   if (req.body.password !== "") {
     let newPassword = req.body.password;
     let newHash = bcrypt.hash(newPassword);
     await User.findByIdAndUpdate(userId, { password: newHash });
-  } else if (req.body.username !== "") {
+  }
+  if (req.body.username !== "") {
     await User.findByIdAndUpdate(userId, { username: req.body.username });
-  } else if (req.body.email !== "") {
+  }
+  if (req.body.email !== "") {
     await User.findByIdAndUpdate(userId, { email: req.body.email });
   }
   let updatedUser = await User.findById(userId);
