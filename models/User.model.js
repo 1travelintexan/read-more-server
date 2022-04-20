@@ -6,9 +6,13 @@ const userSchema = new Schema(
     username: {
       type: String,
       unique: true,
+      required: true,
     },
-    password: String,
-    email: String,
+    password: {
+      type: String,
+      required: true,
+    },
+    email: { type: String, unique: true },
     imageUrl: String,
   },
   {

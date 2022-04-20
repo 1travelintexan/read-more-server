@@ -14,9 +14,8 @@ const isLoggedOut = require("../middleware/isLoggedOut");
 const isLoggedIn = require("../middleware/isLoggedIn");
 
 router.post("/signup", isLoggedOut, (req, res) => {
-  console.log("here", req.body);
-  const { username, password } = req.body;
-
+  const { username, password, email } = req.body;
+  console.log("signup body", req.body);
   if (!username) {
     return res
       .status(400)
@@ -56,6 +55,7 @@ router.post("/signup", isLoggedOut, (req, res) => {
         // Create a user and save it in the database
         return User.create({
           username,
+          email,
           password: hashedPassword,
         });
       })
@@ -134,14 +134,34 @@ router.post("/logout", isLoggedIn, (req, res) => {
   res.status(204).json({});
 });
 
+//update user route
+router.post("/update", async (req, res) => {
+  let userId = req.session.user._id;
+  if (req.body.password !== "") {
+    let newPassword = req.body.password;
+    let newHash = bcrypt.hash(newPassword);
+    await User.findByIdAndUpdate(userId, { password: newHash });
+  } else if (req.body.username !== "") {
+    await User.findByIdAndUpdate(userId, { username: req.body.username });
+  } else if (req.body.email !== "") {
+    await User.findByIdAndUpdate(userId, { email: req.body.email });
+  }
+  let updatedUser = await User.findById(userId);
+  console.log("Updated User", updatedUser);
+  req.status(200).json(updatedUser);
+});
+
 // THIS IS A PROTECTED ROUTE
 // will handle all get requests to http:localhost:5005/api/user
 router.get("/user", async (req, res, next) => {
-  console.log("component did mount");
-  let userId = req.user._id;
-  let profileUser = await User.findById(userId);
-  console.log("for the profile", profileUser);
-  res.status(200).json(profileUser);
+  if (req.session.user) {
+    let userId = req.user._id;
+    let profileUser = await User.findById(userId);
+    console.log("for the profile", profileUser);
+    res.status(200).json(profileUser);
+  } else {
+    res.status(201).json("Please login in");
+  }
 });
 
 module.exports = router;
