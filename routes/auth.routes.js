@@ -158,7 +158,7 @@ router.post("/update", async (req, res) => {
 // will handle all get requests to http:localhost:5005/api/user
 router.get("/user", async (req, res, next) => {
   if (req.session.user) {
-    let userId = req.user._id;
+    let userId = req.session.user._id;
     let profileUser = await User.findById(userId);
     console.log("for the profile", profileUser);
     res.status(200).json(profileUser);
