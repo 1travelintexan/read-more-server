@@ -151,7 +151,7 @@ router.post("/update", async (req, res) => {
   }
   let updatedUser = await User.findById(userId);
   console.log("Updated User", updatedUser);
-  req.status(200).json(updatedUser);
+  res.status(200).json(updatedUser);
 });
 
 // THIS IS A PROTECTED ROUTE
