@@ -34,7 +34,6 @@ module.exports = (app) => {
   // ! please configure the cors `origin` key so that you can accept the requests wherever they might be coming from
   app.use(
     cors({
-      credentials: true,
       origin: process.env.ORIGIN || "http://localhost:3000",
     })
   );
