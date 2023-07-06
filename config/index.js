@@ -69,6 +69,8 @@ module.exports = (app) => {
       resave: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7, // is in milliseconds.  expiring in 1 week
+        sameSite: "none",
+        secure: process.env.NODE_ENV === "production",
       },
       store: new MongoStore({
         mongoUrl: MONGO_URI,
