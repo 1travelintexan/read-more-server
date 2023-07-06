@@ -68,17 +68,17 @@ module.exports = (app) => {
       saveUninitialized: false,
       resave: false,
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24, // is in milliseconds.  expiring in 1 day
+        maxAge: 1000 * 60 * 60 * 24 * 7, // is in milliseconds.  expiring in 1 week
       },
       store: new MongoStore({
         mongoUrl: MONGO_URI,
-        ttl: 60 * 60 * 24, // is in seconds. expiring in 1 day
+        ttl: 60 * 60 * 24 * 7, // is in seconds. expiring in 1 week
       }),
     })
   );
 
-  app.use((req, res, next) => {
-    req.user = req.session.user || null;
-    next();
-  });
+  // app.use((req, res, next) => {
+  //   req.user = req.session.user || null;
+  //   next();
+  // });
 };
